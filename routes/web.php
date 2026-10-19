@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/',function (){
    return view('landing');
 })->name('home');
+
+Route::get('/user/{user}',[ProfileController::class, 'show'])->name('profile.show');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

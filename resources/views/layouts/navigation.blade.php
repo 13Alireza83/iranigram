@@ -18,9 +18,10 @@
             {{-- سمت چپ --}}
             <div class="flex items-center gap-3">
                 @auth
-                    <a href="{{ route('profile.edit') }}" class="text-gray-700 hover:text-brand-600">
-                        {{ auth()->user()->name }}
-                    </a>
+                  <a href="{{route('profile.show', auth()->user())}}" class="text-gray-700 hover:text-brand-600">
+                      {{auth()->user()->name}}
+
+                  </a>
 
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
