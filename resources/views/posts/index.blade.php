@@ -14,9 +14,15 @@
             </div>
         @endif
 
+        @if(session('status') === 'post-deleted')
+            <div class="bg-red-50 border border-red-200 text-red-700 p-3 rounded-lg">
+                پست حذف شد
+            </div>
+        @endif
+
         {{-- فرم ارسال پست --}}
         <div class="bg-white shadow-sm sm:rounded-2xl p-6 border border-gray-100">
-            <form method="POST" action="{{ route('posts.store') }}">
+            <form method="POST" action="{{ route('posts.store') }}" enctype="multipart/form-data">
                 @csrf
 
                 <div class="flex gap-3">
@@ -37,6 +43,13 @@
                                   class="w-full rounded-lg border-gray-300 focus:border-brand-500 focus:ring-brand-500 resize-none"
                                   placeholder="چه خبر؟...">{{ old('body') }}</textarea>
                         <x-input-error :messages="$errors->get('body')" class="mt-1" />
+
+                        {{-- فیلد عکس --}}
+                        <div class="mt-2">
+                            <input type="file" name="image" accept="image/*"
+                                   class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-brand-600 file:text-white hover:file:bg-brand-700 file:cursor-pointer">
+                            <x-input-error :messages="$errors->get('image')" class="mt-1" />
+                        </div>
 
                         <div class="flex justify-end mt-2">
                             <button type="submit" class="bg-brand-600 text-white px-6 py-2 rounded-lg hover:bg-brand-700 transition font-medium">
@@ -75,6 +88,24 @@
 
                     {{-- متن پست --}}
                     <p class="mt-4 text-gray-800 leading-relaxed whitespace-pre-line">{{ $post->body }}</p>
+
+                    {{-- عکس پست --}}
+                    @if($post->image)
+                        <div class="mt-3 rounded-xl overflow-hidden">
+                            <img src="{{ asset('storage/' . $post->image) }}" class="w-full max-h-96 object-cover" alt="عکس پست">
+                        </div>
+                    @endif
+
+                    {{-- دکمه حذف (فقط صاحب پست) --}}
+                    @if(auth()->id() === $post->user_id)
+                        <form method="POST" action="{{ route('posts.destroy', $post) }}" class="mt-3" onsubmit="return confirm('حذف کنم؟')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-sm text-red-500 hover:text-red-700 transition">
+                                حذف پست
+                            </button>
+                        </form>
+                    @endif
 
                 </div>
             @empty
