@@ -96,16 +96,33 @@
                         </div>
                     @endif
 
-                    {{-- دکمه حذف (فقط صاحب پست) --}}
-                    @if(auth()->id() === $post->user_id)
-                        <form method="POST" action="{{ route('posts.destroy', $post) }}" class="mt-3" onsubmit="return confirm('حذف کنم؟')">
+                    {{-- نوار پایین: لایک + حذف --}}
+                    <div class="mt-3 flex items-center gap-4 pt-3 border-t border-gray-100">
+
+                        {{-- لایک --}}
+                        <form method="POST" action="{{ route('posts.like', $post) }}">
                             @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-sm text-red-500 hover:text-red-700 transition">
-                                حذف پست
+                            @php
+                                $liked = $post->likes->contains('user_id', auth()->id());
+                            @endphp
+                            <button type="submit" class="flex items-center gap-1.5 text-sm transition {{ $liked ? 'text-red-500' : 'text-gray-400 hover:text-red-500' }}">
+                                <span class="text-lg">{{ $liked ? '❤️' : '🤍' }}</span>
+                                <span>{{ $post->likes->count() }}</span>
                             </button>
                         </form>
-                    @endif
+
+                        {{-- حذف (فقط صاحب) --}}
+                        @if(auth()->id() === $post->user_id)
+                            <form method="POST" action="{{ route('posts.destroy', $post) }}" onsubmit="return confirm('حذف کنم؟')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-sm text-red-500 hover:text-red-700 transition">
+                                    حذف
+                                </button>
+                            </form>
+                        @endif
+
+                    </div>
 
                 </div>
             @empty
