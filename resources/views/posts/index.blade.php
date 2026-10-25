@@ -124,6 +124,54 @@
 
                     </div>
 
+                    {{-- کامنت‌ها --}}
+                    <div class="mt-3 pt-3 border-t border-gray-100">
+                        @if($post->comments->count() > 0)
+                            <div class="space-y-2 mb-3">
+                                @foreach($post->comments as $comment)
+                                    <div class="flex items-start gap-2 text-sm">
+                                        <div class="w-7 h-7 rounded-full overflow-hidden bg-brand-100 flex-shrink-0">
+                                            @if($comment->user->avatar)
+                                                <img src="{{ asset('storage/' . $comment->user->avatar) }}" class="w-full h-full object-cover" alt="">
+                                            @else
+                                                <div class="w-full h-full flex items-center justify-center text-brand-600 text-xs font-bold">
+                                                    {{ mb_substr($comment->user->name, 0, 1) }}
+                                                </div>
+                                            @endif
+                                        </div>
+
+                                        <div class="flex-1 bg-gray-50 rounded-lg px-3 py-2">
+                                            <div class="flex items-center justify-between">
+                                                <a href="{{ route('profile.show', $comment->user) }}" class="font-medium text-gray-800 text-xs">
+                                                    {{ $comment->user->name }}
+                                                </a>
+                                                @if(auth()->id() === $comment->user_id)
+                                                    <form method="POST" action="{{ route('comments.destroy', $comment) }}" onsubmit="return confirm('حذف کنم؟')">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="text-xs text-red-400 hover:text-red-600">حذف</button>
+                                                    </form>
+                                                @endif
+                                            </div>
+                                            <p class="text-gray-700 mt-1">{{ $comment->body }}</p>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+
+                        {{-- فرم کامنت --}}
+                        <form method="POST" action="{{ route('comments.store', $post) }}" class="flex gap-2">
+                            @csrf
+                            <input type="text" name="body" placeholder="کامنت بنویس..."
+                                   class="flex-1 rounded-lg border-gray-300 text-sm focus:border-brand-500 focus:ring-brand-500">
+                            <button type="submit" class="bg-brand-600 text-white px-4 py-2 rounded-lg hover:bg-brand-700 transition text-sm">
+                                ارسال
+                            </button>
+                        </form>
+                        <x-input-error :messages="$errors->get('body')" class="mt-1" />
+                    </div>
+
                 </div>
             @empty
                 <div class="bg-white shadow-sm sm:rounded-2xl p-10 border border-gray-100 text-center">

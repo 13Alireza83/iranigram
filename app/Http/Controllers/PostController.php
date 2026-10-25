@@ -12,7 +12,7 @@ class PostController extends Controller
 {
     public function index(): View
     {
-        $posts = Post::with('user','likes')->latest()->paginate(10);
+        $posts = Post::with('user','likes','comments.user')->latest()->paginate(10);
 
         return view('posts.index', [
             'posts' => $posts,
@@ -21,7 +21,7 @@ class PostController extends Controller
 
     public function show(Post $post): View
     {
-        $post->load('user','likes');
+        $post->load('user','likes','comments.user');
 
         return view('posts.show', [
             'post' => $post,
