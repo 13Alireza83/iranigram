@@ -2,7 +2,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16 items-center">
 
-            {{-- لوگو --}}
+            {{-- لوگو + فید + جستجو --}}
             <div class="flex items-center gap-6">
                 <a href="{{ route('dashboard') }}" class="text-2xl font-bold text-brand-600">
                     ایرانی‌گرام
@@ -12,16 +12,22 @@
                     <a href="{{ route('dashboard') }}" class="text-gray-700 hover:text-brand-600 font-medium">
                         فید
                     </a>
+
+                    {{-- باکس جستجو --}}
+                    <form method="GET" action="{{ route('search.index') }}" class="hidden md:block">
+                        <input type="text" name="q" placeholder="جستجو..."
+                               value="{{ request('q') }}"
+                               class="w-64 rounded-lg border-gray-200 text-sm focus:border-brand-500 focus:ring-brand-500 bg-gray-50">
+                    </form>
                 @endauth
             </div>
 
             {{-- سمت چپ --}}
             <div class="flex items-center gap-3">
                 @auth
-                  <a href="{{route('profile.show', auth()->user())}}" class="text-gray-700 hover:text-brand-600">
-                      {{auth()->user()->name}}
-
-                  </a>
+                    <a href="{{ route('profile.show', auth()->user()) }}" class="text-gray-700 hover:text-brand-600">
+                        {{ auth()->user()->name }}
+                    </a>
 
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
